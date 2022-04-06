@@ -1,4 +1,7 @@
 { config, pkgs, ... }:
+let
+  myFonts = pkgs.callPackage ./fonts/default.nix { inherit pkgs; };
+in
 {
 
   nixpkgs = {
@@ -14,6 +17,9 @@
     wget
     git
     curl
+
+    xorg.xmodmap
+    lm_sensors
   ];
 
   # ... and install some fonts.
@@ -24,22 +30,17 @@
     fontconfig.enable = true;
 
     fonts = with pkgs; [
+      powerline-fonts
       corefonts
       dejavu_fonts
-      envypn-font
-      fira-code
       font-awesome
       freefont_ttf
       gohufont
-      inconsolata
-      iosevka
       liberation_ttf
       libertine
-      noto-fonts
-      opensans-ttf
-      siji
-      source-code-pro
-      go-font
+      open-sans
+      myFonts.flags-world-color
+      myFonts.icomoon-feather
     ];
   };
 
