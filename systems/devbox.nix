@@ -193,7 +193,7 @@
       INTERVAL=10
       DEVPATH=hwmon1=devices/platform/nct6775.2592 hwmon2=devices/pci0000:00/0000:00:18.3
       DEVNAME=hwmon1=nct6797 hwmon2=k10temp
-      FCTEMPS=hwmon1/pwm7=hwmon1/temp1_input hwmon1/pwm6=hwmon2/temp2_input hwmon1/pwm4=hwmon2/temp2_input hwmon1/pwm3=hwmon2/temp2_input hwmon1/pwm5=hwmon2/temp2_input hwmon1/pwm2=hwmon2/temp2_input
+      FCTEMPS=hwmon1/pwm7=hwmon1/temp1_input hwmon1/pwm6=hwmon2/temp3_input hwmon1/pwm4=hwmon2/temp3_input hwmon1/pwm3=hwmon2/temp3_input hwmon1/pwm5=hwmon2/temp3_input hwmon1/pwm2=hwmon2/temp3_input
       FCFANS=hwmon1/pwm7=hwmon1/fan7_input hwmon1/pwm6=hwmon1/fan6_input hwmon1/pwm4=hwmon1/fan4_input hwmon1/pwm3=hwmon1/fan3_input hwmon1/pwm5=hwmon1/fan5_input hwmon1/pwm2=hwmon1/fan2_input
       MINTEMP=hwmon1/pwm7=40 hwmon1/pwm6=30 hwmon1/pwm4=30 hwmon1/pwm3=30 hwmon1/pwm5=30 hwmon1/pwm2=30
       MAXTEMP=hwmon1/pwm7=70 hwmon1/pwm6=70 hwmon1/pwm4=70 hwmon1/pwm3=70 hwmon1/pwm5=70 hwmon1/pwm2=80
