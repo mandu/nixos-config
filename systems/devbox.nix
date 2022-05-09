@@ -49,7 +49,6 @@
   sound.enable = true;
   hardware.pulseaudio = {
     enable = true;
-    extraModules = [ pkgs.pulseaudio-modules-bt ];
     package = pkgs.pulseaudioFull;
   };
 
@@ -65,6 +64,11 @@
   systemd.services.upower.enable = true;
 
   programs.zsh = { enable = true; };
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+  };
   environment.variables = { EDITOR = "vim"; };
   i18n.defaultLocale = "en_US.UTF-8";
   console = {

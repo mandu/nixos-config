@@ -14,6 +14,7 @@ let
 
     arandr               # simple GUI for xrandr
     asciinema            # record the terminal
+    awscli2              # Amazon Web Services cli
     azure-cli            # Azure Cloud cli
     binutils             # Tools for manipulating binaries (linker, assembler, etc.)
     discord              # discord messaging client
@@ -27,7 +28,7 @@ let
     gcc                  # GNU Compiler Collection
     gimp                 # gnu image manipulation program
     killall              # kill processes by name
-    libreoffice          # office suite
+    libreoffice-fresh    # office suite
     libnotify            # notify-send command
     multilockscreen      # fast lockscreen based on i3lock
     ncdu                 # disk space info (a better du)
@@ -49,6 +50,7 @@ let
     unzip                # list, test and extract compressed files in a ZIP archive
     vlc                  # media player
     weylus               # Use your tablet as graphic tablet/touch screen on your computer
+    zip                  # list, test and extract compressed files in a ZIP archive
     xsel                 # clipboard support (also for neovim)
   ];
 
@@ -340,4 +342,9 @@ in
       lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
     };
   };
+
+  services.flameshot = {
+    enable = true;
+  };
+
 }
