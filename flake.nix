@@ -5,7 +5,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     darwin.url = "github:lnl7/nix-darwin/master";
-    darwin.inputs.nixpkgs.follows = "nixpkgs-unstable";
+    darwin.inputs.nixpkgs.follows = "nixpkgs";
 
     #home-manager.url = "github:nix-community/home-manager/release-21.11";
     #nixpkgs.url = "github:NixOS/nixpkgs/release-21.11";
@@ -61,7 +61,7 @@
 
           home-manager.darwinModules.home-manager
           {
-            nixpkgs = nixpkgsConfig;
+            #nixpkgs = nixpkgsConfig;
 
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;

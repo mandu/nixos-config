@@ -15,7 +15,6 @@ let
     alacritty            # terminal
     firefox              # browser
     chromium
-    vscode               # code editor
 
     arandr               # simple GUI for xrandr
     discord              # discord messaging client

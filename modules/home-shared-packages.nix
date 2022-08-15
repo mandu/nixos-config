@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 let
   defaultPkgs = with pkgs; [
+    vscode               # code editor
+
     asciinema            # record the terminal
     awscli2              # Amazon Web Services cli
     azure-cli            # Azure Cloud cli
@@ -43,4 +45,4 @@ let
     golint
   ];
 in
-[] ++ defaultPkgs ++ gitPkgs ++ goPkgs;
+[] ++ defaultPkgs ++ gitPkgs ++ goPkgs
