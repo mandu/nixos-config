@@ -4,6 +4,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    darwin.url = "github:lnl7/nix-darwin/master";
+    darwin.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
     #home-manager.url = "github:nix-community/home-manager/release-21.11";
     #nixpkgs.url = "github:NixOS/nixpkgs/release-21.11";
     # nixos-hardware = {
@@ -14,7 +17,7 @@
   };
 
   #outputs = { self, nixpkgs, home-manager, nixos-hardware, emacs, ... }: {
-  outputs = { self, nixpkgs, home-manager, ... }: {
+  outputs = { self, nixpkgs, home-manager, darwin, ... }: {
 
     nixosConfigurations = {
       parallels-vm = nixpkgs.lib.nixosSystem {
@@ -31,7 +34,7 @@
 
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.mandu = import ./modules/home.nix;
+            home-manager.users.mandu = import ./modules/linux-home.nix;
           }
         ];
       };
@@ -45,10 +48,28 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.mandu = import ./modules/home.nix;
+            home-manager.users.mandu = import ./modules/linux-home.nix;
           }
         ];
       };
+
+      m1air = darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        #modules = attrValues self.darwinModules ++ [
+        modules = [
+          ./systems/m1air.nix
+
+          home-manager.darwinModules.home-manager
+          {
+            nixpkgs = nixpkgsConfig;
+
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.mandu = import ./modules/darwin-home.nix;
+          }
+        ];
+      };
+
     };
   };
 }
