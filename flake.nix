@@ -2,6 +2,8 @@
   inputs = {
     home-manager.url = "github:nix-community/home-manager/master";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
     #home-manager.url = "github:nix-community/home-manager/release-21.11";
     #nixpkgs.url = "github:NixOS/nixpkgs/release-21.11";
     # nixos-hardware = {

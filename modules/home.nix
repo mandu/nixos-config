@@ -10,6 +10,7 @@ let
   defaultPkgs = with pkgs; [
     alacritty            # terminal
     firefox              # browser
+    chromium
     vscode               # code editor
 
     arandr               # simple GUI for xrandr
@@ -34,6 +35,7 @@ let
     ncdu                 # disk space info (a better du)
     neofetch             # command-line system information
     nheko                # matrix messaging client
+    openssl              # cryptographic library
     pavucontrol          # pulseaudio volume control
     paprefs              # pulseaudio preferences
     pasystray            # pulseaudio systray
@@ -49,7 +51,8 @@ let
     tree                 # display files in a tree view
     unzip                # list, test and extract compressed files in a ZIP archive
     vlc                  # media player
-    weylus               # Use your tablet as graphic tablet/touch screen on your computer
+    wrangler             # cloudflare cli
+    # weylus               # Use your tablet as graphic tablet/touch screen on your computer
     zip                  # list, test and extract compressed files in a ZIP archive
     xsel                 # clipboard support (also for neovim)
   ];
@@ -102,6 +105,7 @@ in
     statusBar
   ];
 
+  home.stateVersion = "22.11";
   home.packages = defaultPkgs ++ gitPkgs ++ gnomePkgs ++ xmonadPkgs ++ goPkgs ++ scripts;
 
   programs.ssh.enable = true;
