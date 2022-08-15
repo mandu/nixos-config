@@ -17,6 +17,7 @@ let
     chromium
 
     arandr               # simple GUI for xrandr
+    binutils             # Tools for manipulating binaries (linker, assembler, etc.)
     discord              # discord messaging client
     dmenu                # application launcher
 
@@ -27,6 +28,7 @@ let
     multilockscreen      # fast lockscreen based on i3lock
     ncdu                 # disk space info (a better du)
     nheko                # matrix messaging client
+    openssl              # cryptographic library
     pavucontrol          # pulseaudio volume control
     paprefs              # pulseaudio preferences
     pasystray            # pulseaudio systray

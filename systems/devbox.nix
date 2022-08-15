@@ -5,7 +5,7 @@
     [
       ../hardware-configurations/devbox.nix
 
-      ../modules/packages.nix
+      ../modules/system-packages.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -69,6 +69,7 @@
     remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   };
+
   environment.variables = { EDITOR = "vim"; };
   i18n.defaultLocale = "en_US.UTF-8";
   console = {

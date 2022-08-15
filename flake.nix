@@ -53,11 +53,15 @@
         ];
       };
 
-      m1air = darwin.lib.darwinSystem {
+    };
+
+
+    darwinConfigurations = {
+      Mikkos-MacBook-Air = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         #modules = attrValues self.darwinModules ++ [
         modules = [
-          ./systems/m1air.nix
+          ./systems/Mikkos-MacBook-Air.nix
 
           home-manager.darwinModules.home-manager
           {
@@ -69,7 +73,7 @@
           }
         ];
       };
-
     };
+
   };
 }

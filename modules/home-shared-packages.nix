@@ -3,10 +3,14 @@ let
   defaultPkgs = with pkgs; [
     vscode               # code editor
 
+    coreutils
+    curl
+    wget
+    git
+
     asciinema            # record the terminal
     awscli2              # Amazon Web Services cli
     azure-cli            # Azure Cloud cli
-    binutils             # Tools for manipulating binaries (linker, assembler, etc.)
     docker-compose       # docker manager
     dive                 # explore docker layers
     exif                 # read and manipulate EXIF data in digital photographs
@@ -15,7 +19,6 @@ let
     file                 # determine file type
     gcc                  # GNU Compiler Collection
     neofetch             # command-line system information
-    openssl              # cryptographic library
     pulumi-bin           # cloud development platform - infrastructure as a code
     radare2              # unix-like reverse engineering framework and commandline tools
     ranger               # terminal file explorer
