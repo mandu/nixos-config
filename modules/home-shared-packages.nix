@@ -28,6 +28,13 @@ let
     wrangler             # cloudflare cli
     zip                  # list, test and extract compressed files in a ZIP archive
     xsel                 # clipboard support (also for neovim)
+
+    tree-sitter          # parser generator tool
+    jq                   # cli JSON processor
+    nodePackages.typescript
+    nodePackages.typescript-language-server
+    nodePackages.pyright
+    nodejs
   ];
 
   gitPkgs = with pkgs.gitAndTools; [
