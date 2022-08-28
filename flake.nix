@@ -73,6 +73,24 @@
           }
         ];
       };
+
+
+      Mikkos-MacBook-Pro = darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        #modules = attrValues self.darwinModules ++ [
+        modules = [
+          ./systems/Mikkos-MacBook-Pro.nix
+
+          home-manager.darwinModules.home-manager
+          {
+            #nixpkgs = nixpkgsConfig;
+
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.mandu = import ./modules/darwin-home.nix;
+          }
+        ];
+      };
     };
 
   };
