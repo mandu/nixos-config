@@ -315,13 +315,7 @@ in
               on_attach = on_attach,
               flags = lsp_flags,
           }
-          EOF
-        '';
-      }
-      {
-        plugin = nvim-lspconfig;
-        config = ''
-          lua << EOF
+
           require'nvim-treesitter.configs'.setup {
             -- A list of parser names, or "all"
             ensure_installed = {
@@ -391,6 +385,7 @@ in
 
     shellAliases = {
       update = "sudo -u mandu nixos-rebuild switch";
+      devbox = "kitty +kitten ssh -p 6666 mandu.nsupdate.info";
     };
 
     zplug = {
