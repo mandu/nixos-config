@@ -22,8 +22,8 @@ in
   # nix.trustedUsers = [
   #   "@admin"
   # ];
+  nix.configureBuildUsers = true;
   users = {
-    nix.configureBuildUsers = true;
     users = {
       mandu = {
         shell = pkgs.zsh;
@@ -182,7 +182,7 @@ in
 
   # https://github.com/nix-community/home-manager/issues/423
   environment.variables = {
-    TERMINFO_DIRS = "${pkgs.kitty.terminfo.outPath}/share/terminfo";
+    #TERMINFO_DIRS = "${pkgs.kitty.terminfo.outPath}/share/terminfo";
     EDITOR = "vim";
   };
   # programs.nix-index.enable = true;
