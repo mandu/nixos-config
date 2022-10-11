@@ -19,6 +19,7 @@ let
     file                 # determine file type
     gcc                  # GNU Compiler Collection
     neofetch             # command-line system information
+    nb                   # A command line note-taking, bookmarking, archiving, and knowledge base application
     pulumi-bin           # cloud development platform - infrastructure as a code
     radare2              # unix-like reverse engineering framework and commandline tools
     ranger               # terminal file explorer
@@ -28,6 +29,13 @@ let
     wrangler             # cloudflare cli
     zip                  # list, test and extract compressed files in a ZIP archive
     xsel                 # clipboard support (also for neovim)
+
+    bat
+    nmap
+    pandoc
+    tig
+    w3m
+    viu
 
     tree-sitter          # parser generator tool
     jq                   # cli JSON processor

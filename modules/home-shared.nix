@@ -394,6 +394,7 @@ in
     shellAliases = {
       update = "sudo -u mandu nixos-rebuild switch";
       devbox = "kitty +kitten ssh -p 6666 mandu.nsupdate.info";
+      icat = "kitty +kitten icat";
     };
 
     zplug = {
