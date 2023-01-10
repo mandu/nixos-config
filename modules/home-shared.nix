@@ -90,13 +90,17 @@ in
             vim.fn.mkdir(parser_install_dir, "p")
             vim.opt.runtimepath:append(parser_install_dir)
 
+            require'nvim-treesitter.install'.compilers = { "clang" }
+
             require'nvim-treesitter.configs'.setup {
               -- A list of parser names, or "all"
               ensure_installed = {
+                "bash",
                 "c",
                 "cpp",
                 "cmake",
                 "make",
+                "markdown",
                 "python",
                 "dockerfile",
                 "lua",
