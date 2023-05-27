@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 let
   extra = ''
+    ${pkgs.xorg.xset}/bin/xset s off -dpms
     ${pkgs.xorg.setxkbmap}/bin/setxkbmap -option ctrl:nocaps
   '';
 

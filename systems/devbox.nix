@@ -60,6 +60,11 @@
     };
   };
 
+  # services.ddclient = {
+  #   enable = true;
+  #   configFile = "/home/mandu/ddclient_opendns.conf";
+  # };
+
   services.upower.enable = true;
   systemd.services.upower.enable = true;
 
@@ -185,9 +190,9 @@
     KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
     '';
 
-  qt5.enable = true;
-  qt5.platformTheme = "gtk2";
-  qt5.style = "gtk2";
+  qt.enable = true;
+  qt.platformTheme = "gtk2";
+  qt.style = "gtk2";
 
   services.openssh.enable = true;
   virtualisation.docker.enable = true;
