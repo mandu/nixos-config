@@ -389,6 +389,28 @@ in
           EOF
         '';
       }
+      {
+        plugin = copilot-vim;
+        config = ''
+        '';
+      }
+      {
+        plugin = nui-nvim;
+      }
+      {
+        plugin = plenary-nvim;
+      }
+      {
+        plugin = ChatGPT-nvim;
+        config = ''
+          lua << EOF
+          require('chatgpt').setup({})
+          openai_params = {
+            model = "gpt-3.5-turbo"
+          }
+          EOF
+        '';
+      }
     ];
   };
 

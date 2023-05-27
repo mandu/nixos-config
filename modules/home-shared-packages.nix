@@ -18,6 +18,7 @@ let
     fd                   # "find" for files
     file                 # determine file type
     gcc                  # GNU Compiler Collection
+    iftop                # Deisplay bandwidth usage on network interface
     neofetch             # command-line system information
     nb                   # A command line note-taking, bookmarking, archiving, and knowledge base application
     pulumi-bin           # cloud development platform - infrastructure as a code
