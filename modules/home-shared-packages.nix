@@ -7,6 +7,7 @@ let
     curl
     wget
     git
+    jpeginfo
 
     asciinema            # record the terminal
     awscli2              # Amazon Web Services cli
