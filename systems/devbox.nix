@@ -195,7 +195,10 @@
   qt.style = "gtk2";
 
   services.openssh.enable = true;
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    enableNvidia = true;
+  };
 
   hardware.fancontrol = {
     enable = true;
