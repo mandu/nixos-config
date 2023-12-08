@@ -25,11 +25,11 @@ in
   # ... and install some fonts.
   fonts = {
     fontDir.enable = true;
-    enableDefaultFonts = true;
+    enableDefaultPackages = true;
     enableGhostscriptFonts = true;
     fontconfig.enable = true;
 
-    fonts = with pkgs; [
+    packages = with pkgs; [
       powerline-fonts
       corefonts
       dejavu_fonts
