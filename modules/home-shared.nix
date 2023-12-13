@@ -3,7 +3,15 @@ let
   foobar = "baz";
 in
 {
-  programs.ssh.enable = true;
+  programs.ssh = {
+    enable = true;
+    extraConfig = ''
+      Host devbox
+        ProxyCommand ssh -q root@mandu-droplet.nsupdate.info nc localhost 2222
+        User mandu
+        IdentityFile ~/.ssh/id_rsa
+      '';
+  };
 
   programs.htop = {
     enable = true;
