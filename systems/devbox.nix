@@ -6,6 +6,7 @@
       ../hardware-configurations/devbox.nix
 
       ../modules/system-packages.nix
+      ../modules/remote-ssh-tunnel.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -195,6 +196,17 @@
   qt.style = "gtk2";
 
   services.openssh.enable = true;
+
+  # Enable the "SSH reverse tunnel" service for SSH reverse tunneling
+  services.remote-ssh-tunnel = {
+    enable = true;
+    localUser = "mandu";
+    remoteHostname = "mandu-droplet.nsupdate.info";
+    remotePort = 22;
+    remoteUser = "root";
+    bindPort = 2222;
+  };
+
   virtualisation.docker = {
     enable = true;
     enableNvidia = true;
