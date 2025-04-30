@@ -22,7 +22,11 @@ in
   # nix.trustedUsers = [
   #   "@admin"
   # ];
-  nix.configureBuildUsers = true;
+  #nix.configureBuildUsers = true;
+  #nix.package = pkgs.nixVersions.latest;
+  nix.package = pkgs.nixVersions.nix_2_24;
+  #nix.package = pkgs.nixVersions.nix_2_22;
+  #nix.package = pkgs.nixVersions.nix_2_18;
   users = {
     users = {
       mandu = {
@@ -45,8 +49,14 @@ in
   # Create /etc/bashrc that loads the nix-darwin environment.
   programs.zsh.enable = true;
 
+  nix.settings.trusted-users = [
+    "root"
+    "@admin"
+    "mandu"
+  ];
+
   # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
+  # services.nix-daemon.enable = true;
 
   # services.yabai = {
   #   enable = true;
@@ -194,9 +204,9 @@ in
   #    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
   #  ];
   fonts = {
-    fontDir.enable = true;
+    #fontDir.enable = true;
 
-    fonts = with pkgs; [
+    packages = with pkgs; [
       powerline-fonts
       # corefonts
       recursive
@@ -218,5 +228,7 @@ in
 
   # Add ability to used TouchID for sudo authentication
   # security.pam.enableSudoTouchIdAuth = true;
+  system.stateVersion = 5;
+  ids.gids.nixbld = 30000;
 
 }

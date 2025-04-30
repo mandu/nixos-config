@@ -13,12 +13,12 @@ in
     ./home-shared.nix
   ];
 
-  home.stateVersion = "22.11";
+  home.stateVersion = "24.05";
   home.packages = sharedPkgs ++ darwinPkgs;
 
   programs.kitty = {
     enable = true;
-    theme = "Space Gray";
+    themeFile = "SpaceGray";
     extraConfig = ''
       hide_window_decorations titlebar-only
     '';

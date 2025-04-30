@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   sharedPkgs = import ./home-shared-packages.nix {
     inherit config pkgs;
@@ -71,7 +71,8 @@ in
     statusBar
   ];
 
-  home.stateVersion = "22.11";
+  nix.package = lib.mkForce pkgs.nixVersions.latest;
+  home.stateVersion = "24.05";
   home.packages = sharedPkgs ++ linuxPkgs ++ gnomePkgs ++ xmonadPkgs ++ scripts;
 
   programs.rofi = {

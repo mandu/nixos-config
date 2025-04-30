@@ -22,7 +22,7 @@ in
   # nix.trustedUsers = [
   #   "@admin"
   # ];
-  nix.configureBuildUsers = true;
+  # nix.configureBuildUsers = true;
   users = {
     users = {
       mandu = {
@@ -46,7 +46,7 @@ in
   programs.zsh.enable = true;
 
   # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
+  # services.nix-daemon.enable = true;
 
   # Apps
   # `home-manager` currently has issues adding them to `~/Applications`

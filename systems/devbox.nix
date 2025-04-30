@@ -9,6 +9,8 @@
       ../modules/remote-ssh-tunnel.nix
     ];
 
+  nix.package = pkgs.nixVersions.latest;
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;

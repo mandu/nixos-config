@@ -94,11 +94,13 @@ in
         config = ''
           lua << EOF
             -- Defines a read-write directory for treesitters in nvim's cache dir
-            local parser_install_dir = vim.fn.stdpath("cache") .. "/treesitters"
+            local parser_install_dir = vim.fn.stdpath("cache") .. "/treesitters-ver5"
             vim.fn.mkdir(parser_install_dir, "p")
             vim.opt.runtimepath:append(parser_install_dir)
 
-            require'nvim-treesitter.install'.compilers = { "clang" }
+            require 'nvim-treesitter.install'.compilers = { 'clang'}
+            require 'nvim-treesitter.install'.prefer_git = true
+
 
             require'nvim-treesitter.configs'.setup {
               -- A list of parser names, or "all"
@@ -121,28 +123,35 @@ in
                 "tsx",
                 "vim",
                 "json",
-                "yaml",
-                "rust"
+                "yaml"
                 },
             
               -- Install parsers synchronously (only applied to `ensure_installed`)
               sync_install = false,
             
               -- Automatically install missing parsers when entering buffer
-              auto_install = true,
+              -- auto_install = true,
             
               -- List of parsers to ignore installing (for "all")
               -- ignore_install = { "javascript" },
             
               highlight = {
                 -- `false` will disable the whole extension
-                enable = true,
+                enable = false,
             
                 -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
                 -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
                 -- the name of the parser)
                 -- list of language that will be disabled
                 -- disable = { "c", "rust" },
+                -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+                disable = function(lang, buf)
+                    local max_filesize = 100 * 1024 -- 100 KB
+                    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+                    if ok and stats and stats.size > max_filesize then
+                        return true
+                    end
+                end,
             
                 -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
                 -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
@@ -240,13 +249,24 @@ in
           config = ''
             lua << EOF
               require('gitsigns').setup {
-                signs = {
-                  add          = {hl = 'GitSignsAdd'   , text = '+', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'},
-                  change       = {hl = 'GitSignsChange', text = '+', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
-                  delete       = {hl = 'GitSignsDelete', text = '_', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
-                  topdelete    = {hl = 'GitSignsDelete', text = '‾', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
-                  changedelete = {hl = 'GitSignsChange', text = '~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
-                },
+
+              signs = {
+                add          = { text = '┃' },
+                change       = { text = '┃' },
+                delete       = { text = '_' },
+                topdelete    = { text = '‾' },
+                changedelete = { text = '~' },
+                untracked    = { text = '┆' },
+              },
+              signs_staged = {
+                add          = { text = '┃' },
+                change       = { text = '┃' },
+                delete       = { text = '_' },
+                topdelete    = { text = '‾' },
+                changedelete = { text = '~' },
+                untracked    = { text = '┆' },
+              },
+              signs_staged_enable = true,
                 signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
                 numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
                 linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
@@ -275,9 +295,6 @@ in
                   relative = 'cursor',
                   row = 0,
                   col = 1
-                },
-                yadm = {
-                  enable = false
                 },
                 on_attach = function(bufnr)
                   local gs = package.loaded.gitsigns
@@ -389,7 +406,7 @@ in
               on_attach = on_attach,
               flags = lsp_flags,
           }
-          require('lspconfig')['tsserver'].setup{
+          require('lspconfig')['ts_ls'].setup{
               on_attach = on_attach,
               flags = lsp_flags,
           }
@@ -428,7 +445,9 @@ in
 
   programs.zsh = {
     enable = true;
-    enableAutosuggestions = true;
+    autosuggestion = {
+      enable = true;
+    };
     enableCompletion = true;
     localVariables = {
       POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD = true;
@@ -471,6 +490,11 @@ in
     keyMode = "vi";
     prefix = "C-b";
     customPaneNavigationAndResize = true;
+    extraConfig = ''
+      set -gu default-command
+      set -g default-shell "$SHELL"
+    '';
+
   };
 
   programs.git = {
