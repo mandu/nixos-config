@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 let
   defaultPkgs = with pkgs; [
+    # aws-sam-cli
     claude-code
     cachix
     coreutils
@@ -8,6 +9,7 @@ let
     wget
     git
     jpeginfo
+    uv
 
     asciinema            # record the terminal
     awscli2              # Amazon Web Services cli
@@ -20,7 +22,7 @@ let
     file                 # determine file type
     gcc                  # GNU Compiler Collection
     iftop                # Deisplay bandwidth usage on network interface
-    neofetch             # command-line system information
+    #neofetch             # command-line system information
     nb                   # A command line note-taking, bookmarking, archiving, and knowledge base application
     #pulumi-bin           # cloud development platform - infrastructure as a code
     radare2              # unix-like reverse engineering framework and commandline tools
@@ -47,9 +49,7 @@ let
     #nodePackages.pyright
     pyright
     nodejs
-  ];
 
-  gitPkgs = with pkgs.gitAndTools; [
     diff-so-fancy # git diff with colors
     git-crypt     # git files encryption
     hub           # github command-line client
@@ -67,4 +67,4 @@ let
     golint
   ];
 in
-[] ++ defaultPkgs ++ gitPkgs ++ goPkgs
+[] ++ defaultPkgs ++ goPkgs

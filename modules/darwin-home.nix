@@ -21,6 +21,7 @@ in
     themeFile = "SpaceGray";
     extraConfig = ''
       hide_window_decorations titlebar-only
+      macos_option_as_alt yes
     '';
   };
 

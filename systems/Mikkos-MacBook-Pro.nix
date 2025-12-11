@@ -24,7 +24,7 @@ in
   # ];
   #nix.configureBuildUsers = true;
   #nix.package = pkgs.nixVersions.latest;
-  nix.package = pkgs.nixVersions.nix_2_24;
+  nix.package = pkgs.nixVersions.nix_2_28;
   #nix.package = pkgs.nixVersions.nix_2_22;
   #nix.package = pkgs.nixVersions.nix_2_18;
   users = {
@@ -42,7 +42,7 @@ in
   nix.extraOptions = ''
     auto-optimise-store = true
     experimental-features = nix-command flakes
-  '' + lib.optionalString (pkgs.system == "aarch64-darwin") ''
+  '' + lib.optionalString (pkgs.stdenv.hostPlatform.system == "aarch64-darwin") ''
     extra-platforms = x86_64-darwin aarch64-darwin
   '';
 
@@ -95,7 +95,7 @@ in
   # };
 
   services.skhd = {
-    enable = true;
+    enable = false;
     # package = skhd;
     skhdConfig = ''
         # create terminal
@@ -194,6 +194,7 @@ in
   environment.variables = {
     #TERMINFO_DIRS = "${pkgs.kitty.terminfo.outPath}/share/terminfo";
     EDITOR = "vim";
+    # OPENAI_API_KEY loaded from ~/.config/secrets/openai via zsh initExtra
   };
   # programs.nix-index.enable = true;
 

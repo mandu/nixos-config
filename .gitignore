@@ -1,3 +1,28 @@
 *.swp
 etc/wpa_supplicant.conf
 result
+
+# Secrets - NEVER commit these
+secrets/
+*.secret
+*.secrets
+.env
+.env.*
+*-secret.nix
+*-secrets.nix
+
+# API keys and credentials
+**/api-keys/
+**/credentials/
+
+# SSH keys (just in case)
+id_rsa
+id_ed25519
+*.pem
+*.key
+
+# macOS
+.DS_Store
+
+# Nix build artifacts
+result-*

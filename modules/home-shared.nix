@@ -5,12 +5,14 @@ in
 {
   programs.ssh = {
     enable = true;
-    extraConfig = ''
-      Host devbox
-        ProxyCommand ssh -q root@mandu-droplet.nsupdate.info nc localhost 2222
-        User mandu
-        IdentityFile ~/.ssh/id_rsa
-      '';
+    enableDefaultConfig = false;
+    matchBlocks = {
+      "devbox" = {
+        proxyCommand = "ssh -q root@mandu-droplet.nsupdate.info nc localhost 2222";
+        user = "mandu";
+        identityFile = "~/.ssh/id_rsa";
+      };
+    };
   };
 
   programs.htop = {
@@ -78,89 +80,33 @@ in
         config = ''
         '';
       }
-      {
-        plugin = deoplete-nvim;
-        config = ''
-          let g:deoplete#enable_at_startup = 1
-        '';
-      }
+      # {
+      #   plugin = deoplete-nvim;
+      #   config = ''
+      #     let g:deoplete#enable_at_startup = 1
+      #   '';
+      # }
       {
         plugin = vim-polyglot;
         config = ''
         '';
       }
       {
-        plugin = nvim-treesitter.withPlugins (pulgins: pkgs.tree-sitter.allGrammars);
+        plugin = nvim-treesitter.withAllGrammars;
         config = ''
           lua << EOF
-            -- Defines a read-write directory for treesitters in nvim's cache dir
-            local parser_install_dir = vim.fn.stdpath("cache") .. "/treesitters-ver5"
-            vim.fn.mkdir(parser_install_dir, "p")
-            vim.opt.runtimepath:append(parser_install_dir)
-
-            require 'nvim-treesitter.install'.compilers = { 'clang'}
-            require 'nvim-treesitter.install'.prefer_git = true
-
-
             require'nvim-treesitter.configs'.setup {
-              -- A list of parser names, or "all"
-              ensure_installed = {
-                "bash",
-                "c",
-                "cpp",
-                "cmake",
-                "make",
-                "markdown",
-                "python",
-                "dockerfile",
-                "lua",
-                "javascript",
-                "typescript",
-                "sql",
-                "graphql",
-                "html",
-                "nix",
-                "tsx",
-                "vim",
-                "json",
-                "yaml"
-                },
-            
-              -- Install parsers synchronously (only applied to `ensure_installed`)
-              sync_install = false,
-            
-              -- Automatically install missing parsers when entering buffer
-              -- auto_install = true,
-            
-              -- List of parsers to ignore installing (for "all")
-              -- ignore_install = { "javascript" },
-            
               highlight = {
-                -- `false` will disable the whole extension
-                enable = false,
-            
-                -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-                -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-                -- the name of the parser)
-                -- list of language that will be disabled
-                -- disable = { "c", "rust" },
-                -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+                enable = true,
                 disable = function(lang, buf)
-                    local max_filesize = 100 * 1024 -- 100 KB
-                    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-                    if ok and stats and stats.size > max_filesize then
-                        return true
-                    end
+                  local max_filesize = 100 * 1024 -- 100 KB
+                  local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+                  if ok and stats and stats.size > max_filesize then
+                    return true
+                  end
                 end,
-            
-                -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-                -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-                -- Using this option may slow down your editor, and you may see some duplicate highlights.
-                -- Instead of true it can also be a list of languages
                 additional_vim_regex_highlighting = false,
               },
-
-              parser_install_dir = parser_install_dir
             }
           EOF
         '';
@@ -235,15 +181,15 @@ in
 
         '';
       }
-      {
-        plugin = deoplete-go;
-        config = ''
-          let g:go_def_mode = "gopls"
-          call deoplete#custom#option('omni_patterns', {
-          \ 'go': '[^. *\t]\.\w*',
-          \})
-        '';
-      }
+      # {
+      #   plugin = deoplete-go;
+      #   config = ''
+      #     let g:go_def_mode = "gopls"
+      #     call deoplete#custom#option('omni_patterns', {
+      #     \ 'go': '[^. *\t]\.\w*',
+      #     \})
+      #   '';
+      # }
       {
           plugin = gitsigns-nvim;
           config = ''
@@ -397,26 +343,20 @@ in
             vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
             vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
           end
-          
-          local lsp_flags = {
-            -- This is the default in Nvim 0.7+
-            debounce_text_changes = 150,
+
+          -- Configure LSP servers using the new vim.lsp.config API (Neovim 0.11+)
+          vim.lsp.config['pyright'] = {
+            on_attach = on_attach,
           }
-          require('lspconfig')['pyright'].setup{
-              on_attach = on_attach,
-              flags = lsp_flags,
-          }
-          require('lspconfig')['ts_ls'].setup{
-              on_attach = on_attach,
-              flags = lsp_flags,
+          vim.lsp.config['ts_ls'] = {
+            on_attach = on_attach,
           }
 
+          -- Enable the configured LSP servers
+          vim.lsp.enable('pyright')
+          vim.lsp.enable('ts_ls')
+
           EOF
-        '';
-      }
-      {
-        plugin = copilot-vim;
-        config = ''
         '';
       }
       {
@@ -424,6 +364,57 @@ in
       }
       {
         plugin = plenary-nvim;
+      }
+      {
+        plugin = snacks-nvim;
+        config = ''
+          lua << EOF
+          require('snacks').setup({})
+          EOF
+        '';
+      }
+      {
+        plugin = claudecode-nvim;
+        config = ''
+          lua << EOF
+          require('claudecode').setup({
+            terminal = {
+              split_side = "right",
+              split_width_percentage = 0.40,
+            },
+          })
+          -- Keybindings
+          vim.keymap.set('n', '<leader>cc', '<cmd>ClaudeCode<cr>', { desc = 'Toggle Claude Code' })
+          vim.keymap.set('n', '<leader>cf', '<cmd>ClaudeCodeFocus<cr>', { desc = 'Focus Claude Code' })
+          vim.keymap.set('v', '<leader>cs', '<cmd>ClaudeCodeSend<cr>', { desc = 'Send to Claude' })
+          EOF
+        '';
+      }
+      {
+        plugin = minuet-ai-nvim;
+        config = ''
+          lua << EOF
+          require('minuet').setup({
+            provider = 'gemini',
+            provider_options = {
+              gemini = {
+                model = 'gemini-2.5-flash-lite',
+                api_key = 'GEMINI_API_KEY',
+              },
+            },
+            virtualtext = {
+              auto_trigger_ft = { '*' },
+              keymap = {
+                accept = '<C-y>',
+                accept_line = '<C-j>',
+                prev = '<C-p>',
+                next = '<C-n>',
+                dismiss = '<C-e>',
+              },
+            },
+          })
+          EOF
+        '';
       }
       {
         plugin = ChatGPT-nvim;
@@ -458,6 +449,12 @@ in
       devbox = "kitty +kitten ssh -p 6666 mandu.nsupdate.info";
       icat = "kitty +kitten icat";
     };
+
+    initContent = ''
+      # Load secrets from local files (not tracked in git)
+      [[ -f ~/.config/secrets/openai ]] && export OPENAI_API_KEY=$(cat ~/.config/secrets/openai)
+      [[ -f ~/.config/secrets/gemini ]] && export GEMINI_API_KEY=$(cat ~/.config/secrets/gemini)
+    '';
 
     zplug = {
       enable = true;
@@ -499,10 +496,14 @@ in
 
   programs.git = {
     enable = true;
-    userName = "Mikko Haavisto";
-    userEmail = "mvi.haavisto@gmail.com";
-    aliases = {
-      lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
+    settings = {
+      user = {
+        name = "Mikko Haavisto";
+        email = "mvi.haavisto@gmail.com";
+      };
+      alias = {
+        lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
+      };
     };
   };
 }
