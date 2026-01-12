@@ -39,7 +39,6 @@ in
       set backspace=indent,eol,start
     '';
 
-
     plugins = with pkgs.vimPlugins; [
       { plugin = telescope-nvim;
         config = ''
@@ -93,23 +92,6 @@ in
       }
       {
         plugin = nvim-treesitter.withAllGrammars;
-        config = ''
-          lua << EOF
-            require'nvim-treesitter.configs'.setup {
-              highlight = {
-                enable = true,
-                disable = function(lang, buf)
-                  local max_filesize = 100 * 1024 -- 100 KB
-                  local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-                  if ok and stats and stats.size > max_filesize then
-                    return true
-                  end
-                end,
-                additional_vim_regex_highlighting = false,
-              },
-            }
-          EOF
-        '';
       }
       {
         plugin = telescope-fzf-native-nvim;
@@ -488,11 +470,27 @@ in
     prefix = "C-b";
     customPaneNavigationAndResize = true;
     extraConfig = ''
+      # Status bar with rr slot info
+      set -g status-right '#[fg=cyan]#(cat ~/.rr-active-slot 2>/dev/null || echo "-") #[default]| %H:%M'
+
+      # Pane titles
+      set -g pane-border-status top
+      set -g pane-border-format " #{pane_title} "
+
+      # Mouse support
+      set -g mouse on
+
+      # Better colors
+      set -g default-terminal "screen-256color"
+
+      # Shell defaults
       set -gu default-command
       set -g default-shell "$SHELL"
     '';
-
   };
+
+  # Add rr-workspace CLI to PATH
+  home.sessionPath = [ "$HOME/dev/rr-workspace/rr-workspace/bin" ];
 
   programs.git = {
     enable = true;
@@ -506,4 +504,26 @@ in
       };
     };
   };
+
+  # Neovim plugin configs in after/plugin/ to ensure plugins are loaded first
+  xdg.configFile."nvim/after/plugin/treesitter.lua".text = ''
+    local ok, configs = pcall(require, "nvim-treesitter.configs")
+    if not ok then
+      return
+    end
+
+    configs.setup({
+      highlight = {
+        enable = true,
+        disable = function(lang, buf)
+          local max_filesize = 100 * 1024 -- 100 KB
+          local ok_stat, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+          if ok_stat and stats and stats.size > max_filesize then
+            return true
+          end
+        end,
+        additional_vim_regex_highlighting = false,
+      },
+    })
+  '';
 }
