@@ -34,6 +34,7 @@ let
     zip                  # list, test and extract compressed files in a ZIP archive
     xsel                 # clipboard support (also for neovim)
     #usbutils
+    postgresql
 
     bat
     nmap
