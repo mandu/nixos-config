@@ -436,6 +436,7 @@ in
       # Load secrets from local files (not tracked in git)
       [[ -f ~/.config/secrets/openai ]] && export OPENAI_API_KEY=$(cat ~/.config/secrets/openai)
       [[ -f ~/.config/secrets/gemini ]] && export GEMINI_API_KEY=$(cat ~/.config/secrets/gemini)
+      [[ -f ~/.config/secrets/jira ]] && export JIRA_API_TOKEN=$(cat ~/.config/secrets/jira)
     '';
 
     zplug = {
