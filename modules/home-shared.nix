@@ -439,6 +439,7 @@ in
       update = "sudo -u mandu nixos-rebuild switch";
       devbox = "kitty +kitten ssh -p 6666 mandu.nsupdate.info";
       icat = "kitty +kitten icat";
+      claude-rr = "CLAUDE_CONFIG_DIR=$HOME/.claude-rr claude";
     };
 
     initContent = ''
@@ -446,6 +447,7 @@ in
       [[ -f ~/.config/secrets/openai ]] && export OPENAI_API_KEY=$(cat ~/.config/secrets/openai)
       [[ -f ~/.config/secrets/gemini ]] && export GEMINI_API_KEY=$(cat ~/.config/secrets/gemini)
       [[ -f ~/.config/secrets/jira ]] && export JIRA_API_TOKEN=$(cat ~/.config/secrets/jira)
+      [[ -f ~/.config/secrets/zai ]] && export ZAI_API_KEY=$(cat ~/.config/secrets/zai)
     '';
 
     zplug = {
@@ -499,11 +501,16 @@ in
     '';
   };
 
-  # Add rr-workspace CLI to PATH
-  home.sessionPath = [ "$HOME/dev/rr-workspace/rr-workspace/bin" ];
+  # Add rr-workspace CLI, ~/.local/bin, and vite+ to PATH
+  home.sessionPath = [
+    "$HOME/.local/bin"
+    "$HOME/dev/rr-workspace/rr-workspace/bin"
+    "$HOME/.vite-plus/bin"
+  ];
 
   programs.git = {
     enable = true;
+    signing.format = "openpgp";
     settings = {
       user = {
         name = "Mikko Haavisto";

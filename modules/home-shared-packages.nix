@@ -2,7 +2,6 @@
 let
   defaultPkgs = with pkgs; [
     # aws-sam-cli
-    claude-code
     cachix
     coreutils
     curl
