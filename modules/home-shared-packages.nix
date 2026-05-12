@@ -45,9 +45,8 @@ let
 
     tree-sitter          # parser generator tool
     jq                   # cli JSON processor
-    nodePackages.typescript
-    nodePackages.typescript-language-server
-    #nodePackages.pyright
+    typescript
+    typescript-language-server
     pyright
     nodejs
 
@@ -58,10 +57,8 @@ let
   ];
 
   goPkgs = with pkgs; [
-    gotools
     gopls
     go-outline
-    gopls
     gopkgs
     gocode-gomod
     godef

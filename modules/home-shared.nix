@@ -30,6 +30,7 @@ in
     vimdiffAlias = true;
     withNodeJs = true;
     withPython3 = true;
+    withRuby = true;
 
     extraConfig = ''
       set nocompatible
@@ -41,6 +42,7 @@ in
 
     plugins = with pkgs.vimPlugins; [
       { plugin = telescope-nvim;
+        type = "viml";
         config = ''
           lua << EOF
           require('telescope').setup({
@@ -110,6 +112,7 @@ in
       }
       {
         plugin = vim-go;
+        type = "viml";
         config = ''
           let mapleader=","
 
@@ -174,6 +177,7 @@ in
       # }
       {
           plugin = gitsigns-nvim;
+          type = "viml";
           config = ''
             lua << EOF
               require('gitsigns').setup {
@@ -290,6 +294,7 @@ in
       }
       {
         plugin = nvim-lspconfig;
+        type = "viml";
         config = ''
           lua << EOF
           -- Mappings.
@@ -349,6 +354,7 @@ in
       }
       {
         plugin = snacks-nvim;
+        type = "viml";
         config = ''
           lua << EOF
           require('snacks').setup({})
@@ -357,6 +363,7 @@ in
       }
       {
         plugin = claudecode-nvim;
+        type = "viml";
         config = ''
           lua << EOF
           require('claudecode').setup({
@@ -374,6 +381,7 @@ in
       }
       {
         plugin = minuet-ai-nvim;
+        type = "viml";
         config = ''
           lua << EOF
           require('minuet').setup({
@@ -400,6 +408,7 @@ in
       }
       {
         plugin = ChatGPT-nvim;
+        type = "viml";
         config = ''
           lua << EOF
           require('chatgpt').setup({})
