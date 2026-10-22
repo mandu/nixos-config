@@ -74,10 +74,11 @@ in
   # took /etc/resolv.conf over with no upstream and nothing outside the
   # tailnet resolved.
   services.resolved.enable = true;
-  # Key-only OpenSSH as the way back in if Tailscale breaks. Once Tailscale
-  # SSH works, set openFirewall = false to close port 22 publicly.
+  # Key-only OpenSSH, reachable over the tailnet only (port 22 stays closed
+  # publicly). If Tailscale breaks: Hetzner's web console / rescue system.
   services.openssh = {
     enable = true;
+    openFirewall = false;
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
