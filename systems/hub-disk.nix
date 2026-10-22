@@ -1,5 +1,7 @@
 # The hub's local disk, laid out by disko when nixos-anywhere installs it.
-# The data volume is deliberately NOT here: disko would format it.
+# The data volume is deliberately NOT here: disko would format it. Install
+# with the volume DETACHED: attached, it can enumerate as /dev/sda and get
+# formatted instead of the server's disk.
 {
   disko.devices.disk.main = {
     type = "disk";

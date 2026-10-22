@@ -69,6 +69,11 @@ in
     extraUpFlags = [ "--ssh" ];
     extraSetFlags = [ "--operator=mandu" ]; # rc runs `tailscale serve`
   };
+  # MagicDNS (the hub reaches hosts by name) through systemd-resolved, which
+  # keeps Hetzner's DHCP resolvers for everything else. Without it tailscaled
+  # took /etc/resolv.conf over with no upstream and nothing outside the
+  # tailnet resolved.
+  services.resolved.enable = true;
   # Key-only OpenSSH as the way back in if Tailscale breaks. Once Tailscale
   # SSH works, set openFirewall = false to close port 22 publicly.
   services.openssh = {
