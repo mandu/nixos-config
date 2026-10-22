@@ -128,6 +128,42 @@ in
     '';
   };
 
+  # ---- backups --------------------------------------------------------------
+  # Hetzner Volumes have no backups or snapshots, so restic copies /data
+  # nightly to a Storage Box (BX11 in hel1, SFTP on port 23, reachable only
+  # from Hetzner's network). Where and how to log in is on the volume
+  # (/data/secrets/storagebox-*), as is the repository password; keep a copy
+  # of that password off the hub too, or a lost volume takes the backups'
+  # key with it. `sudo restic-hub snapshots` lists them.
+  services.restic.backups.hub = {
+    repositoryFile = "/data/secrets/restic-repository";
+    passwordFile = "/data/secrets/restic-password";
+    extraOptions = [ "sftp.command='ssh -F /data/secrets/storagebox-ssh-config storagebox -s sftp'" ];
+    initialize = true;
+    paths = [ "/data" ];
+    exclude = [ "/data/lost+found" "/data/home/*/.cache" ];
+    timerConfig = {
+      OnCalendar = "03:00"; # before the nightly upgrade
+      RandomizedDelaySec = "20m";
+      Persistent = true;
+    };
+    pruneOpts = [ "--keep-daily 7" "--keep-weekly 5" "--keep-monthly 12" ];
+  };
+  systemd.services.restic-backups-hub.unitConfig = {
+    RequiresMountsFor = [ "/data" ];
+    OnFailure = [ "hub-backup-failed.service" ];
+  };
+  # A failed backup pushes an alert like rc's watcher does.
+  systemd.services.hub-backup-failed = {
+    path = [ pkgs.curl ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      curl -fsS -m 15 -H "Title: hub backup failed" -H "Priority: high" -H "Tags: warning" \
+        --data-binary "The nightly restic backup of the hub's volume failed. See journalctl -u restic-backups-hub on the hub." \
+        http://127.0.0.1:2586/rc-alerts
+    '';
+  };
+
   # ---- what runs on it ------------------------------------------------------
   # Claude Code's native installer drops a generic Linux binary in ~/.local
   # and keeps it updated itself; nix-ld lets NixOS run it.
