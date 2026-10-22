@@ -94,6 +94,9 @@ in
   # Claude Code's native installer drops a generic Linux binary in ~/.local
   # and keeps it updated itself; nix-ld lets NixOS run it.
   programs.nix-ld.enable = true;
+  # rc (`rc deploy` puts it there) and claude live in ~/.local/bin; other
+  # hosts run `rc agent …` here over non-interactive ssh.
+  environment.localBinInPath = true;
   environment.systemPackages = with pkgs; [
     curl
     git
