@@ -7,6 +7,11 @@
     darwin.url = "github:lnl7/nix-darwin/master";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
 
+    # The rc hub server: NixOS stable, not master (it upgrades itself nightly).
+    nixpkgs-hub.url = "github:NixOS/nixpkgs/nixos-26.05";
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs-hub";
+
     #home-manager.url = "github:nix-community/home-manager/release-21.11";
     #nixpkgs.url = "github:NixOS/nixpkgs/release-21.11";
     # nixos-hardware = {
@@ -17,9 +22,20 @@
   };
 
   #outputs = { self, nixpkgs, home-manager, nixos-hardware, emacs, ... }: {
-  outputs = { self, nixpkgs, home-manager, darwin, ... }: {
+  outputs = { self, nixpkgs, home-manager, darwin, nixpkgs-hub, disko, ... }: {
 
     nixosConfigurations = {
+      # Hetzner Cloud ARM VM; install: nixos-anywhere --flake .#hub (see
+      # remote-code docs/hub.md).
+      hub = nixpkgs-hub.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = [
+          disko.nixosModules.disko
+          ./systems/hub-disk.nix
+          ./systems/hub.nix
+        ];
+      };
+
       parallels-vm = nixpkgs.lib.nixosSystem {
         # system = "x86_64-linux";
         system = "aarch64-linux";
