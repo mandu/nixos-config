@@ -91,6 +91,43 @@ in
     allowedUDPPorts = [ config.services.tailscale.port ];
   };
 
+  # ---- alerts ---------------------------------------------------------------
+  # ntfy for rc's watcher (`[hosts.hub.upkeep.watch]`): rc posts to it on
+  # localhost; your phone subscribes over the tailnet at
+  # https://<hub>:8443/rc-alerts. For instant delivery on iOS it forwards
+  # ntfy.sh a poll request carrying only a message ID and a hash of the topic
+  # URL, never the text. (The tailnet name is public anyway: Tailscale's
+  # HTTPS certificates land in Certificate Transparency logs.)
+  services.ntfy-sh = {
+    enable = true;
+    settings = {
+      base-url = "https://hub.tail319407.ts.net:8443";
+      listen-http = "127.0.0.1:2586";
+      behind-proxy = true;
+      upstream-base-url = "https://ntfy.sh";
+    };
+  };
+  # Publish ntfy on the tailnet next to rc serve (443). Tailscale keeps the
+  # serve config in its state; this sets it up on a fresh volume.
+  systemd.services.tailscale-serve-ntfy = {
+    after = [ "tailscaled.service" "ntfy-sh.service" ];
+    wants = [ "tailscaled.service" ];
+    wantedBy = [ "multi-user.target" ];
+    path = [ config.services.tailscale.package ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    # tailscaled may still be logging in at boot
+    script = ''
+      for i in $(seq 60); do
+        tailscale serve --bg --https=8443 http://127.0.0.1:2586 && exit 0
+        sleep 5
+      done
+      exit 1
+    '';
+  };
+
   # ---- what runs on it ------------------------------------------------------
   # Claude Code's native installer drops a generic Linux binary in ~/.local
   # and keeps it updated itself; nix-ld lets NixOS run it.
