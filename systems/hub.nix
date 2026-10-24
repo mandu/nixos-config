@@ -180,7 +180,14 @@ in
     restic
     ripgrep
     tmux
+    # rc's dev hosts (`rc hosts up`): Hetzner's API, the installer, the
+    # 1Password vault with the keys, AWS session credentials for the hosts.
+    _1password-cli
+    awscli2
+    hcloud
+    nixos-anywhere
   ];
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "1password-cli" ];
 
   # ---- keeping itself current -----------------------------------------------
   nix.settings = {
