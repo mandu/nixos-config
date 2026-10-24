@@ -16,6 +16,12 @@ in
   home.stateVersion = "24.05";
   home.packages = sharedPkgs ++ darwinPkgs;
 
+  # Homebrew on PATH. home-manager writes ~/.zprofile now, so this moves here
+  # from the hand-written one.
+  programs.zsh.profileExtra = ''
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  '';
+
   programs.kitty = {
     enable = true;
     themeFile = "SpaceGray";
