@@ -224,6 +224,19 @@ in
     ];
   };
 
+  # rc keeps Claude sessions running here with the lid closed, so system sleep
+  # stays disabled. `pmset disablesleep 1` doesn't survive a restart, and Awayke
+  # starts inactive when rc relaunches it at login: re-apply it every 30 s.
+  launchd.daemons.disablesleep = {
+    script = ''
+      /usr/bin/pmset -g | /usr/bin/grep -q 'SleepDisabled[[:space:]]*1' || /usr/bin/pmset -a disablesleep 1
+    '';
+    serviceConfig = {
+      RunAtLoad = true;
+      StartInterval = 30;
+    };
+  };
+
   # Keyboard
   system.keyboard.enableKeyMapping = true;
   system.keyboard.remapCapsLockToEscape = true;
