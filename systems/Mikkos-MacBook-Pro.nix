@@ -24,7 +24,8 @@ in
   # ];
   #nix.configureBuildUsers = true;
   #nix.package = pkgs.nixVersions.latest;
-  nix.package = pkgs.nixVersions.nix_2_28;
+  nix.package = pkgs.nixVersions.nix_2_34;
+  #nix.package = pkgs.nixVersions.nix_2_28;
   #nix.package = pkgs.nixVersions.nix_2_22;
   #nix.package = pkgs.nixVersions.nix_2_18;
   users = {
