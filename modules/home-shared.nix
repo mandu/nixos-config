@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   foobar = "baz";
 in
@@ -441,9 +441,7 @@ in
       enable = true;
     };
     enableCompletion = true;
-    localVariables = {
-      POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD = true;
-    };
+    syntaxHighlighting.enable = true;
 
     shellAliases = {
       update = "sudo -u mandu nixos-rebuild switch";
@@ -460,14 +458,6 @@ in
       [[ -f ~/.config/secrets/zai ]] && export ZAI_API_KEY=$(cat ~/.config/secrets/zai)
     '';
 
-    zplug = {
-      enable = true;
-      plugins = [
-        { name = "zsh-users/zsh-syntax-highlighting"; }
-        { name = "romkatv/powerlevel10k"; tags = [ as:theme depth:1 ]; }
-      ];
-    };
-
     oh-my-zsh = {
       enable = true;
       plugins = [
@@ -476,6 +466,115 @@ in
         "man"
         "colored-man-pages"
       ];
+    };
+  };
+
+  # Prompt. Plain 7-bit ASCII only (no Nerd Font/Powerline glyphs, no emoji),
+  # so it renders the same in any font, terminal and locale, ssh clients
+  # included. Two lines: everything informative on the first, the input on
+  # its own line so long paths never wrap the command line. No right prompt
+  # (it garbles scrollback when an ssh window is resized).
+  #
+  #   21:04 mandu@Mikkos-MacBook-Pro nixos-config/modules on main [+1!2?3>1] via nix took 12s exit 1
+  #   $
+  #
+  # user@host only over ssh (or as another user/root). Git status mostly follows
+  # git-prompt.sh: + staged, ! modified, ? untracked, x deleted, r renamed,
+  # = conflicted, $ stashed, >N ahead, <N behind.
+  programs.starship = {
+    enable = true;
+    settings = {
+      add_newline = true;
+      format = lib.concatStrings [
+        "$time"
+        "($username$hostname )"
+        "$directory"
+        "$git_branch"
+        "$git_commit"
+        "$git_state"
+        "$git_status"
+        "$nix_shell"
+        "$python"
+        "$cmd_duration"
+        "$jobs"
+        "$status"
+        "$line_break"
+        "$character"
+      ];
+
+      time = {
+        disabled = false;
+        time_format = "%H:%M";
+        format = "[$time]($style) ";
+        style = "bright-black";
+      };
+      username = {
+        format = "[$user]($style)";
+        style_user = "bold yellow";
+        style_root = "bold red";
+      };
+      hostname = {
+        ssh_only = true;
+        format = "[@$hostname]($style)";
+        style = "bold yellow";
+      };
+      # Inside a repo, the path from the repo root.
+      directory = {
+        truncation_length = 4;
+        read_only = " (ro)";
+      };
+      git_branch = {
+        format = "on [$branch(:$remote_branch)]($style) ";
+        only_attached = true;
+        truncation_length = 40;
+        truncation_symbol = "...";
+      };
+      # Detached HEAD: on @c4d3ec2.
+      git_commit = {
+        format = "on [@$hash]($style) ";
+      };
+      git_status = {
+        conflicted = "=\${count}";
+        ahead = ">\${count}";
+        behind = "<\${count}";
+        diverged = ">\${ahead_count}<\${behind_count}";
+        untracked = "?\${count}";
+        stashed = "\\$\${count}";
+        modified = "!\${count}";
+        staged = "+\${count}";
+        renamed = "r\${count}";
+        deleted = "x\${count}";
+        typechanged = "t\${count}";
+      };
+      # nix develop, nix-shell, and direnv's use flake.
+      nix_shell = {
+        format = "via [nix( $state)( \\($name\\))]($style) ";
+        impure_msg = "";
+        pure_msg = "pure";
+        unknown_msg = "";
+      };
+      # Only an activated virtualenv, not every directory with Python files.
+      python = {
+        format = "via [venv \\($virtualenv\\)]($style) ";
+        detect_extensions = [ ];
+        detect_files = [ ];
+        detect_folders = [ ];
+      };
+      cmd_duration = {
+        format = "took [$duration]($style) ";
+      };
+      jobs = {
+        format = "[jobs:$number]($style) ";
+        number_threshold = 1;
+      };
+      status = {
+        disabled = false;
+        format = "[exit $status( \\(SIG$signal_name\\))]($style) ";
+      };
+      character = {
+        success_symbol = "[\\$](bold green)";
+        error_symbol = "[\\$](bold red)";
+      };
     };
   };
 
