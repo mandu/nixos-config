@@ -12,8 +12,17 @@ in
         user = "mandu";
         identityFile = "~/.ssh/id_rsa";
       };
+      # RRGPU test bench Jetson (Orin NX dev kit), over Tailscale. Plain
+      # "rrgpu" resolves to another host on the LAN, so pin the address.
+      "rrgpu rrgpu-bench" = {
+        hostname = "100.64.136.44";
+        user = "rrgpu";
+      };
     };
   };
+
+  # The RRGPU device lane (./rrtest replay) runs against this ssh destination.
+  home.sessionVariables.RRTEST_JETSON = "rrgpu@rrgpu-bench";
 
   programs.htop = {
     enable = true;
