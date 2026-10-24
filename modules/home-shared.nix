@@ -6,17 +6,18 @@ in
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    # Host blocks, with OpenSSH's own directive names.
+    settings = {
       "devbox" = {
-        proxyCommand = "ssh -q root@mandu-droplet.nsupdate.info nc localhost 2222";
-        user = "mandu";
-        identityFile = "~/.ssh/id_rsa";
+        ProxyCommand = "ssh -q root@mandu-droplet.nsupdate.info nc localhost 2222";
+        User = "mandu";
+        IdentityFile = "~/.ssh/id_rsa";
       };
       # RRGPU test bench Jetson (Orin NX dev kit), over Tailscale. Plain
       # "rrgpu" resolves to another host on the LAN, so pin the address.
       "rrgpu rrgpu-bench" = {
-        hostname = "100.64.136.44";
-        user = "rrgpu";
+        HostName = "100.64.136.44";
+        User = "rrgpu";
       };
     };
   };
