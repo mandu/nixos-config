@@ -36,6 +36,26 @@
         ];
       };
 
+      # rc's disposable dev hosts (Hetzner Cloud; `rc hosts up` installs them
+      # with nixos-anywhere): one config, an output per CPU. The Macs'
+      # nixpkgs and home-manager, so the tools match the mbp's.
+      dev-x86 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          disko.nixosModules.disko
+          home-manager.nixosModules.home-manager
+          ./systems/dev-host.nix
+        ];
+      };
+      dev-arm = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        modules = [
+          disko.nixosModules.disko
+          home-manager.nixosModules.home-manager
+          ./systems/dev-host.nix
+        ];
+      };
+
       parallels-vm = nixpkgs.lib.nixosSystem {
         # system = "x86_64-linux";
         system = "aarch64-linux";
