@@ -14,7 +14,10 @@ let
   hubKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMcvsUN7UhKMO8Zi9Ie6jaUCosYyltu4+F4d/2rcq855 mandu@hub (rc: installs dev hosts)";
 in
 {
-  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
+  imports = [
+    (modulesPath + "/profiles/qemu-guest.nix")
+    ../modules/dev-host-data-disk.nix # /data, once `rc hosts disk` gives it one
+  ];
 
   system.stateVersion = "26.05";
   time.timeZone = "Europe/London";

@@ -97,6 +97,12 @@
     };
 
 
+    # VM tests. The Hetzner hosts have no KVM: they run, slowly, under TCG.
+    checks = nixpkgs-hub.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ] (system: {
+      dev-host-data-disk =
+        nixpkgs-hub.legacyPackages.${system}.testers.runNixOSTest ./tests/dev-host-data-disk.nix;
+    });
+
     darwinConfigurations = {
       Mikkos-MacBook-Air = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
