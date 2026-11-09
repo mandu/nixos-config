@@ -7,10 +7,18 @@
 let
   base = {
     virtualisation.docker.enable = true;
+    # a user like the dev hosts' one, whose zsh reads /etc/zshenv
+    programs.zsh.enable = true;
+    users.users.dev = {
+      isNormalUser = true;
+      uid = 1000;
+      shell = pkgs.zsh;
+    };
     virtualisation.memorySize = 1536;
     # Hetzner's hosts have no KVM: under TCG, more vCPUs, cheap pointer
     # authentication on ARM (QEMU's default is slow to emulate), and time
-    # for devices to show up.
+    # for devices to show up (udev can take minutes on a busy host; the
+    # waits below are long for the same reason).
     virtualisation.cores = 4;
     boot.kernelParams = [ "systemd.default_device_timeout_sec=900" ];
     # As on Hetzner, where the root disk is virtio-scsi too: a volume is seen
@@ -75,10 +83,16 @@ in
 
     def wait_mounted(m, path):
         try:
-            m.wait_until_succeeds(f"mountpoint -q {path}", timeout=180)
+            m.wait_until_succeeds(f"mountpoint -q {path}", timeout=600)
         except Exception:
             diagnose(m)
             raise
+
+    def claude_tmpdir(m, env=""):
+        # what a session rc starts now would get: a new zsh, as the user
+        return m.succeed(
+            f"runuser -u dev -- env {env} zsh -c 'echo ''${{CLAUDE_CODE_TMPDIR:-unset}}'"
+        ).strip()
 
     def docker_pid(m):
         return m.succeed("systemctl show -p MainPID --value docker.service").strip()
@@ -95,23 +109,34 @@ in
 
     with subtest("no disk: nothing mounted, nothing waits, nothing failed"):
         plain.wait_for_unit("multi-user.target")
-        plain.wait_for_unit("docker.service")
+        plain.wait_for_unit("docker.service", timeout=1800)
         plain.fail("mountpoint -q /data")
         plain.fail("mountpoint -q /var/lib/docker")
         plain.succeed("test \"$(systemctl show -p ActiveState --value data.mount)\" = inactive")
         plain.succeed("test -z \"$(systemctl list-units --failed --plain --no-legend)\"")
+        assert claude_tmpdir(plain) == "unset", "no disk: /tmp, as before"
 
     with subtest("attached while Docker runs: /data mounts, Docker is left alone"):
         pid = docker_pid(plain)
+        # a session already running, started before the disk came
+        plain.succeed("runuser -u dev -- zsh -c 'exec sleep 1000' >/dev/null 2>&1 &")
         img = plain.state_dir / "hot.img"
         volume(img)
         plain.send_monitor_command(f"drive_add 0 if=none,id=hot,format=raw,file={img}")
         plain.send_monitor_command("device_add scsi-hd,drive=hot,bus=scsi0.0,vendor=HC,product=Volume,serial=4711")
-        plain.wait_until_succeeds("test -e /dev/disk/by-id/scsi-0HC_Volume_4711", timeout=180)
+        plain.wait_until_succeeds("test -e /dev/disk/by-id/scsi-0HC_Volume_4711", timeout=600)
         wait_mounted(plain, "/data")
         plain.succeed("test \"$(readlink -f /dev/rc-data)\" = \"$(readlink -f /dev/disk/by-id/scsi-0HC_Volume_4711)\"")
         plain.wait_for_unit("rc-data-dirs.service")
         plain.succeed("test \"$(stat -c %a /data/docker)\" = 710")
+        plain.succeed("test \"$(stat -c %a /data/tmp)\" = 1777")
+        # new sessions: on the disk, where Claude can make its own folder
+        assert claude_tmpdir(plain) == "/data/tmp", claude_tmpdir(plain)
+        assert claude_tmpdir(plain, "CLAUDE_CODE_TMPDIR=/elsewhere") == "/elsewhere"
+        plain.succeed("runuser -u dev -- install -d -m 700 /data/tmp/claude-1000")
+        plain.succeed("test \"$(stat -c %U:%a /data/tmp/claude-1000)\" = dev:700")
+        # the running one keeps its environment
+        plain.fail("tr '\\0' '\\n' < /proc/$(pgrep -u dev -x sleep)/environ | grep -q CLAUDE_CODE_TMPDIR")
         plain.fail("mountpoint -q /var/lib/docker")
         assert docker_pid(plain) == pid, "Docker restarted"
 
@@ -124,8 +149,8 @@ in
 
     with subtest("disk first, config later (a switch): mounted, Docker left alone"):
         volume(late.state_dir / "vol.img")
-        late.wait_for_unit("docker.service")
-        late.wait_until_succeeds("test -e /dev/disk/by-id/scsi-0HC_Volume_4712", timeout=300)
+        late.wait_for_unit("docker.service", timeout=1800)
+        late.wait_until_succeeds("test -e /dev/disk/by-id/scsi-0HC_Volume_4712", timeout=600)
         late.fail("test -e /dev/rc-data")
         late.succeed("docker volume create before")
         pid = docker_pid(late)
@@ -135,13 +160,14 @@ in
         late.wait_for_unit("rc-data-dirs.service")
         late.fail("mountpoint -q /var/lib/docker")
         assert docker_pid(late) == pid, "the switch restarted Docker"
+        assert claude_tmpdir(late) == "/data/tmp", claude_tmpdir(late)
         late.succeed("docker volume inspect before")
         late.succeed("test -z \"$(systemctl list-units --failed --plain --no-legend)\"")
         late.shutdown()
 
     with subtest("boot with the disk: Docker starts on it"):
         volume(booted.state_dir / "vol.img")
-        booted.wait_for_unit("docker.service")
+        booted.wait_for_unit("docker.service", timeout=1800)
         wait_mounted(booted, "/data")
         docker_on_disk(booted)
         booted.succeed("test -z \"$(systemctl list-units --failed --plain --no-legend)\"")
