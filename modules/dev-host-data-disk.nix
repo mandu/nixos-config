@@ -49,7 +49,8 @@
     '';
   };
 
-  # Its folders, each time it mounts.
+  # Its folders, each time it mounts. /data/tmp is like /tmp (sticky, for
+  # everyone): Claude Code's scratch space, below.
   systemd.services.rc-data-dirs = {
     description = "Folders on the data disk";
     wantedBy = [ "data.mount" ];
@@ -62,8 +63,21 @@
     };
     script = ''
       install -d -m 0710 /data/docker
+      install -d -m 1777 /data/tmp
     '';
   };
+
+  # New Claude Code sessions keep their scratch space on the disk: Claude
+  # puts it in $CLAUDE_CODE_TMPDIR/claude-<uid> (default /tmp). Every zsh
+  # reads /etc/zshenv, the ones rc starts sessions with included. /data/tmp
+  # lives on the disk, so it's there only while the disk is mounted; else
+  # /tmp as before. A running session keeps its own (its environment is set);
+  # an explicit setting wins.
+  programs.zsh.shellInit = ''
+    if [[ -z "''${CLAUDE_CODE_TMPDIR-}" && -d /data/tmp ]]; then
+      export CLAUDE_CODE_TMPDIR=/data/tmp
+    fi
+  '';
 
   systemd.mounts = [
     # /data: a unit, not an fstab entry. Only the volume pulls it in (the
